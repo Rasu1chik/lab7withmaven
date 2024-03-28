@@ -1,0 +1,14 @@
+add
+Kvartirka
+4
+5
+25
+3
+bad
+normal
+few
+Nazvanie
+2010
+7
+3
+save
