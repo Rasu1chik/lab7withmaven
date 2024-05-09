@@ -1,5 +1,5 @@
 add
-Kvartirka
+KvartirkaSCRIPT
 4
 5
 25
@@ -11,4 +11,4 @@ Nazvanie
 2010
 7
 3
-save
+info

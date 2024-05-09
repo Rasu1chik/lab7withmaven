@@ -1,11 +1,11 @@
 package org.example;
 
 import org.example.commandLine.ConsoleColors;
-import org.example.exeptions.ExitObliged;
-import org.example.exeptions.InvalidForm;
+import org.example.exeptions.*;
 import org.example.managers.*;
 import org.example.commandLine.Console;
 import org.example.commandLine.commands.*;
+import org.exa
 
 
 import java.util.List;
@@ -13,50 +13,51 @@ import java.util.List;
 
 
 public class App {
+    private static CommandManager commandManager; // Объявляем commandManager как поле класса
+
+    public App(Console console, CollectionManager collectionManager, FileManager fileManager) {
+    }
 
     public static void main(String[] args) {
         Console console = new Console();
         CollectionManager collectionManager = new CollectionManager();
-        CommandManager commandManager = new CommandManager();
+        System.out.println(Flat.);
 
 
+        /*
+        String filePath = System.getenv("FILE_PATH");
 
-        //String s = args[0];
+        if (filePath == null) {
+            System.out.println("Переменная среды FILE_PATH не была установлена.");
+            return;
+        }
 
-        String s = "/Users/rasulabakarov/Downloads/lab5withmaven/file.csv";
-        FileManager fileManager = new FileManager(console, collectionManager, s);
+         */
+
+
+        String filePath = "/Users/rasulabakarov/Downloads/lab5withmaven/file.csv";
+        FileManager fileManager = new FileManager(console, collectionManager, filePath);
         try {
             if (fileManager.isFindFile()) {
                 fileManager.createObjects();
             }
-
-
-        } catch (ExitObliged e){
+        } catch (ExitObliged e) {
             console.println(ConsoleColors.toColor("До свидания!", ConsoleColors.YELLOW));
             return;
         } catch (InvalidForm e) {
-            throw new RuntimeException(e);
+            console.printError("Ошибка при чтении CSV: " + e.getMessage());
+            // Обработка InvalidForm
+        } catch (RuntimeException e) {
+            console.printError("Произошла ошибка: " + e.getMessage());
         }
 
-        commandManager.addCommand(List.of(
-                new Help(console, commandManager),
-                new Info(console, collectionManager),
-                new Show(console, collectionManager),
-                new AddElement(console, collectionManager),
-                new Update(console, collectionManager),
-                new RemoveById(console, collectionManager),
-                new Clear(console, collectionManager),
-                new Save(console, fileManager),
-                new AddIfMin(console,collectionManager),
-                new Exit(),
-                new Execute(console, fileManager,commandManager),
-                new RemoveGreater(console, collectionManager),
-                new History(console, commandManager),
-                new FilterByHouse(console,collectionManager),
-                new FilterStartsWithName(console,collectionManager),
-                new PrintFieldDescendingFlat(console,collectionManager)
-
-        ));
+        commandManager = new CommandManager(console, null, collectionManager, fileManager); // Сначала передаем null
+        commandManager.addCommand(new Help(console, commandManager));
+        commandManager.addCommand(new History(console, commandManager));
+        commandManager.addCommand(new Execute(console, fileManager, commandManager));
+        // Добавляем команду Help после инициализации commandManager
+        new App(console, collectionManager, fileManager);
         new RuntimeManager(console, commandManager).interactiveMode();
     }
+
 }
