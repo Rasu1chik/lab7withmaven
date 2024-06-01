@@ -1,15 +1,18 @@
 package org.example.managers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.example.models.Flat;
 import org.example.exeptions.InvalidForm;
+import org.example.utility.DatabaseHandler;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.TreeSet;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Класс, организующий работу с коллекцией.
@@ -19,15 +22,30 @@ public class CollectionManager {
     private final Set<Flat> collection = new TreeSet<>();
 
 
-    private final LocalDateTime initTime;
+    private final LocalDateTime lastInitTime;
     private LocalDateTime lastSaveTime;
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    Lock writeLock = lock.writeLock();
+    Lock readLock = lock.readLock();
+    private static final Logger collectionManagerLogger = LogManager.getLogger(CollectionManager.class);
+
 
     /**
      * Конструктор класса CollectionManager.
      * Инициализирует дату создания коллекции.
      */
     public CollectionManager() {
-        this.initTime = LocalDateTime.now();
+        this.lastInitTime = LocalDateTime.now();
+        this.lastSaveTime = null;
+        collection.addAll(DatabaseHandler.getDatabaseManager().loadCollection());
+    }
+    public Set<Flat> getCollection() {
+        try {
+            readLock.lock();
+            return collection;
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public static String formatTime(LocalDateTime localDateTime) {
@@ -35,9 +53,6 @@ public class CollectionManager {
         return localDateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
     }
 
-    public Set<Flat> getCollection(){
-        return collection;
-    }
 
     public String reversCollections(Set<Flat> revers){
         return String.valueOf(revers.toString());
@@ -92,11 +107,15 @@ public class CollectionManager {
         this.collection.removeAll(els);
     }
 
-    public void addElement(Flat flat) throws InvalidForm {
-        this.lastSaveTime = LocalDateTime.now();
-        if (!flat.validate()) throw new InvalidForm();
-        flat.setId(getLastId() + 1);
-        collection.add(flat);
+    public void addElement(Flat flat) {
+        try {
+            writeLock.lock();
+            this.lastSaveTime = LocalDateTime.now();
+            collection.add(flat);
+            collectionManagerLogger.info("Добавлен объект в коллекцию", flat);
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     public void addElements(Collection<Flat> els) throws InvalidForm{
@@ -144,7 +163,7 @@ public class CollectionManager {
     }
 
     public LocalDateTime getInitTimeInDate(){
-        return initTime;
+        return lastInitTime;
     }
 
     public LocalDateTime getLastSaveTimeInDate() {

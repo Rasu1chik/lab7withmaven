@@ -6,5 +6,7 @@ public enum ResponseStatus {
     EXIT,
     ERROR,
     WRONG_ARGUMENTS,
-    EXECUTE_SCRIPT
+    EXECUTE_SCRIPT,
+
+    LOGIN_FAILED
 }

@@ -2,7 +2,7 @@ package org.example.models;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Coordinates implements Serializable,Validator {
+public class Coordinates implements Validator,Serializable {
     private double x;
     private Integer y; //Поле не может быть null
 

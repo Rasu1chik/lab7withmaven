@@ -5,15 +5,8 @@ import org.example.exeptions.CommandRuntimeError;
 import org.example.exeptions.ExitObliged;
 import org.example.exeptions.IllegalArgumentsException;
 import org.example.network.Response;
-import org.example.utility.OutputColors;
-import org.example.exeptions.NoSuchCommand;
-import org.example.managers.CommandManager;
-import org.example.managers.FileManager;
 import org.example.network.Request;
 import org.example.network.ResponseStatus;
-
-import java.io.*;
-import java.util.NoSuchElementException;
 
 /**
  * Команда 'execute_script'

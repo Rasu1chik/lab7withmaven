@@ -12,6 +12,7 @@ import java.util.Objects;
 public class Response implements Serializable {
     private final ResponseStatus status;
     private String response = "";
+
     private Collection<Flat> collection;
 
     public Response(ResponseStatus status) {

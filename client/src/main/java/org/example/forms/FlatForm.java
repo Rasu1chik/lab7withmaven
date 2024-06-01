@@ -5,10 +5,10 @@ import org.example.models.Coordinates;
 import org.example.models.Flat;
 import org.example.models.*;
 import org.example.exeptions.ExceptionInFileMode;
-import java.util.TreeSet;
-import java.util.Objects;
 import org.example.utility.ExecuteFileManager;
 import org.example.utility.OutputColors;
+
+import java.time.LocalDateTime;
 
 
 public class FlatForm extends Form<Flat>{
@@ -28,13 +28,13 @@ public class FlatForm extends Form<Flat>{
         return new Flat(
                 askName(),
                 askCoordinates(),
+                LocalDateTime.now(),
                 askArea(),
                 askNumberOfRooms(),
                 askFurnish(),
                 askView(),
                 askTransport(),
-                askHouse()
-        );
+                askHouse());
     }
 
     private String askName(){

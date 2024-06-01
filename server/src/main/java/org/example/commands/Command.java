@@ -1,6 +1,8 @@
 package org.example.commands;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.example.exeptions.CommandRuntimeError;
 ;
 import org.example.exeptions.ExitObliged;
@@ -18,11 +20,13 @@ import java.util.Objects;
 public abstract class Command {
     private final String name;
     private final String description;
+    protected Logger commandLogger = LogManager.getLogger(this.getClass());
 
 
     public Command(String name, String description) {
         this.name = name;
         this.description = description;
+
     }
 
 
